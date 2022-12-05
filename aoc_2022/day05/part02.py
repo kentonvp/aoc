@@ -1,6 +1,7 @@
 import os
 
 
+# TODO: this is the number of columns in the input
 NUM = 3
 
 
