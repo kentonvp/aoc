@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "aoc-2022"
+version = "0.1.0"
+description = ""
+authors = ["Kenton Van Peursem <kenton.vanpeursem@moremath.ai>"]
+readme = "README.md"
+packages = [{include = "aoc_2022"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+pytest = "^7.2.0"
+black = "^22.10.0"
+requests = "^2.28.1"
+python-dotenv = "^0.21.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
