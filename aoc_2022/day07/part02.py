@@ -1,14 +1,9 @@
 import os
-import pdb
 import time
 
 
 TOTAL_DISK_SIZE = 70_000_000
 NECESSARY_DISK_SPACE = 30_000_000
-
-CD = 1
-LS = 2
-FILE = 3
 
 
 def compute(input: str):
@@ -80,7 +75,6 @@ def test_compute():
 
 
 if __name__ == "__main__":
-    test_compute()
     p = os.path.split(__file__)[0]
     with open(f"{p}/input.txt") as f:
         input = f.read()
