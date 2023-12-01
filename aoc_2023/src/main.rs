@@ -1,11 +1,16 @@
 fn main() {
-    let fname = download_input(1, "a");
+    dotenv::dotenv().ok();
+    let session = std::env::var("AOC_SESSION_TOKEN").expect("AOC_SESSION_TOKEN not set");
+
+    let fname = download_input(1, "a", &session);
+
     let input = std::fs::read_to_string(fname).unwrap();
+
     day1(input.clone());
     day1b(input.clone());
 }
 
-fn download_input(day: u8, part: &str) -> String {
+fn download_input(day: u8, part: &str, session: &str) -> String {
     let input_file = format!("inputs/day{}{}.txt", day, part);
     if std::path::Path::new(&input_file).exists() {
         println!("{} already exists", input_file);
@@ -13,11 +18,10 @@ fn download_input(day: u8, part: &str) -> String {
     }
 
     let url = format!("https://adventofcode.com/2023/day/{}/input", day);
-    let cookie = std::env::var("AOC_COOKIE").expect("AOC_COOKIE not set");
 
     let client = reqwest::blocking::Client::new();
     let res = client.get(&url)
-        .header("Cookie", format!("session={}", cookie))
+        .header("Cookie", format!("session={}", session))
         .send().unwrap();
 
     let body = res.text().unwrap();
