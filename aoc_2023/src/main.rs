@@ -3,43 +3,18 @@ fn main() {
     let session = std::env::var("AOC_SESSION_TOKEN").expect("AOC_SESSION_TOKEN not set");
 
     let args = std::env::args().collect::<Vec<String>>();
-    let day = args.get(1).expect("day: u8").parse::<u8>().unwrap();
+    let day = args.get(1).expect("INVALID ARGUMENTS::requires the challenge day").parse::<u8>().unwrap();
     let fname = download_input(day, &session);
 
     let input = std::fs::read_to_string(fname).unwrap();
 
-    day1(input.clone());
-    day1b(input.clone());
-}
-
-fn download_input(day: u8,  session: &str) -> String {
-    let input_file = format!("inputs/day{}.txt", day);
-    if std::path::Path::new(&input_file).exists() {
-        println!("{} already exists", input_file);
-        return input_file;
+    match day {
+        1 => {
+            day1(input.clone());
+            day1b(input.clone());
+        }
+        _ => panic!("Day {} not implemented", day)
     }
-
-    let url = format!("https://adventofcode.com/2023/day/{}/input", day);
-
-    let client = reqwest::blocking::Client::new();
-    let resp = client.get(&url)
-        .header("Cookie", format!("session={}", session))
-        .send().map_err(|e| {
-            eprintln!("ERROR::{}", e);
-            panic!("Error making request to download input file -- day={day}")
-        }).unwrap();
-
-    if resp.status() != 200 {
-        eprintln!("{:?}", resp);
-        panic!("Error downloading input file -- day={day}")
-    }
-
-
-    let body = resp.text().unwrap();
-    std::fs::write(&input_file, body).unwrap();
-
-    println!("{}", input_file);
-    return input_file;
 }
 
 fn day1(input: String) -> u64 {
@@ -114,6 +89,37 @@ fn day1b(input: String) -> u64 {
     println!("{sum}");
     return sum;
 }
+
+fn download_input(day: u8,  session: &str) -> String {
+    let input_file = format!("inputs/day{}.txt", day);
+    if std::path::Path::new(&input_file).exists() {
+        println!("{} already exists", input_file);
+        return input_file;
+    }
+
+    let url = format!("https://adventofcode.com/2023/day/{}/input", day);
+
+    let client = reqwest::blocking::Client::new();
+    let resp = client.get(&url)
+        .header("Cookie", format!("session={}", session))
+        .send().map_err(|e| {
+            eprintln!("ERROR::{}", e);
+            panic!("Error making request to download input file -- day={day}")
+        }).unwrap();
+
+    if resp.status() != 200 {
+        eprintln!("{:?}", resp);
+        panic!("Error downloading input file -- day={day}")
+    }
+
+
+    let body = resp.text().unwrap();
+    std::fs::write(&input_file, body).unwrap();
+
+    println!("{}", input_file);
+    return input_file;
+}
+
 
 // Test
 #[cfg(test)]
