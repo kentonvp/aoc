@@ -3,7 +3,11 @@ fn main() {
     let session = std::env::var("AOC_SESSION_TOKEN").expect("AOC_SESSION_TOKEN not set");
 
     let args = std::env::args().collect::<Vec<String>>();
-    let day = args.get(1).expect("INVALID ARGUMENTS::requires the challenge day").parse::<u8>().unwrap();
+    let day = args
+        .get(1)
+        .expect("INVALID ARGUMENTS::requires the challenge day")
+        .parse::<u8>()
+        .unwrap();
     let fname = download_input(day, &session);
 
     let input = std::fs::read_to_string(fname).unwrap();
@@ -13,7 +17,7 @@ fn main() {
             day1(input.clone());
             day1b(input.clone());
         }
-        _ => panic!("Day {} not implemented", day)
+        _ => panic!("Day {} not implemented", day),
     }
 }
 
@@ -24,10 +28,10 @@ fn day1(input: String) -> u64 {
         let s = line.to_string();
         // find the first numeric character of the line
         let d1_idx = s.find(char::is_numeric).unwrap();
-        let d1 = s.get(d1_idx..d1_idx+1).unwrap();
+        let d1 = s.get(d1_idx..d1_idx + 1).unwrap();
 
         let d2_idx = s.rfind(char::is_numeric).unwrap();
-        let d2 = s.get(d2_idx..d2_idx+1).unwrap();
+        let d2 = s.get(d2_idx..d2_idx + 1).unwrap();
         let d = format!("{}{}", d1, d2);
 
         // parse d to integer
@@ -38,7 +42,9 @@ fn day1(input: String) -> u64 {
 }
 
 fn day1b(input: String) -> u64 {
-    let numbers: [&str; 10] = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"];
+    let numbers: [&str; 10] = [
+        "zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine",
+    ];
     let digits: [&str; 10] = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
 
     let mut sum = 0u64;
@@ -90,7 +96,7 @@ fn day1b(input: String) -> u64 {
     return sum;
 }
 
-fn download_input(day: u8,  session: &str) -> String {
+fn download_input(day: u8, session: &str) -> String {
     let input_file = format!("inputs/day{}.txt", day);
     if std::path::Path::new(&input_file).exists() {
         println!("{} already exists", input_file);
@@ -100,18 +106,20 @@ fn download_input(day: u8,  session: &str) -> String {
     let url = format!("https://adventofcode.com/2023/day/{}/input", day);
 
     let client = reqwest::blocking::Client::new();
-    let resp = client.get(&url)
+    let resp = client
+        .get(&url)
         .header("Cookie", format!("session={}", session))
-        .send().map_err(|e| {
+        .send()
+        .map_err(|e| {
             eprintln!("ERROR::{}", e);
             panic!("Error making request to download input file -- day={day}")
-        }).unwrap();
+        })
+        .unwrap();
 
     if resp.status() != 200 {
         eprintln!("{:?}", resp);
         panic!("Error downloading input file -- day={day}")
     }
-
 
     let body = resp.text().unwrap();
     std::fs::write(&input_file, body).unwrap();
@@ -120,7 +128,6 @@ fn download_input(day: u8,  session: &str) -> String {
     return input_file;
 }
 
-
 // Test
 #[cfg(test)]
 mod tests {
@@ -128,22 +135,26 @@ mod tests {
 
     #[test]
     fn test_day1() {
-        let input = String::from("1abc2
+        let input = String::from(
+            "1abc2
             pqr3stu8vwx
             a1b2c3d4e5f
-            treb7uchet");
+            treb7uchet",
+        );
         assert!(day1(input) == 142);
     }
 
     #[test]
     fn test_day1b() {
-        let input = String::from("two1nine
+        let input = String::from(
+            "two1nine
             eightwothree
             abcone2threexyz
             xtwone3four
             4nineeightseven2
             zoneight234
-            7pqrstsixteen");
+            7pqrstsixteen",
+        );
         assert!(day1b(input) == 281);
     }
 }
