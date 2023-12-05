@@ -55,8 +55,7 @@ pub fn process2(input: &str) -> u32 {
         })
         .collect::<Vec<usize>>();
 
-    let mut counter = Vec::new();
-    counter.resize(card_copies.len(), 1u32);
+    let mut counter = vec![1u32; card_copies.len()];
     let mut sum = 0;
     for (i, n_cards) in card_copies.iter().enumerate() {
         sum += counter[i];
