@@ -1,7 +1,7 @@
-
 mod day1;
 mod day2;
 mod day3;
+mod day4;
 
 fn main() {
     dotenv::dotenv().ok();
@@ -30,6 +30,10 @@ fn main() {
             day3::process1(&input);
             day3::process2(&input);
         }
+        4 => {
+            day4::process1(&input);
+            day4::process2(&input);
+        }
         _ => panic!("Day {} not implemented", day),
     }
 }
@@ -45,7 +49,7 @@ fn download_input(day: u8, session: &str) -> String {
 
     let client = reqwest::blocking::Client::new();
     let resp = client
-        .get(&url)
+        .get(url)
         .header("Cookie", format!("session={}", session))
         .send()
         .map_err(|e| {
@@ -63,5 +67,5 @@ fn download_input(day: u8, session: &str) -> String {
     std::fs::write(&input_file, body).unwrap();
 
     println!("{}", input_file);
-    return input_file;
+    input_file
 }

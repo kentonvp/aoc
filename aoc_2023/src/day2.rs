@@ -17,7 +17,7 @@ pub fn process1(input: &str) -> u32 {
             .collect::<Vec<&str>>();
 
         for game in games {
-            let selections = game.split(",").map(|s| s.trim()).collect::<Vec<&str>>();
+            let selections = game.split(',').map(|s| s.trim()).collect::<Vec<&str>>();
             for op in selections {
                 let mut it = op.split_whitespace();
                 let val = it.next().unwrap().parse::<u32>().unwrap();
@@ -56,7 +56,7 @@ pub fn process1(input: &str) -> u32 {
     }
 
     println!("{sum}");
-    return sum;
+    sum
 }
 
 pub fn process2(input: &str) -> u32 {
@@ -74,7 +74,7 @@ pub fn process2(input: &str) -> u32 {
         let mut max_green: u32 = 0;
         let mut max_blue: u32 = 0;
         for game in games {
-            let selections = game.split(",").map(|s| s.trim()).collect::<Vec<&str>>();
+            let selections = game.split(',').map(|s| s.trim()).collect::<Vec<&str>>();
             for op in selections {
                 let mut it = op.split_whitespace();
                 let val = it.next().unwrap().parse::<u32>().unwrap();
@@ -106,14 +106,13 @@ pub fn process2(input: &str) -> u32 {
     }
 
     println!("{sum}");
-    return sum;
+    sum
 }
 
 // Test
 #[cfg(test)]
 mod tests {
     use super::*;
-
 
     #[test]
     fn test_process1() {

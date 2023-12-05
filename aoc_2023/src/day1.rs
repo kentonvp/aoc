@@ -10,7 +10,7 @@ pub fn process1(input: &str) -> u64 {
         sum += d.parse::<u64>().unwrap();
     }
     println!("{sum}");
-    return sum;
+    sum
 }
 
 pub fn process2(input: &str) -> u64 {
@@ -62,7 +62,7 @@ pub fn process2(input: &str) -> u64 {
         sum += d.parse::<u64>().unwrap();
     }
     println!("{sum}");
-    return sum;
+    sum
 }
 
 // Test

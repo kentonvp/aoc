@@ -7,7 +7,7 @@ pub fn process1(input: &str) -> u32 {
 pub fn process2(input: &str) -> u32 {
     let stime = std::time::Instant::now();
     println!("Day N - Part 2: {} [{:?}]", sum, stime.elapsed());
-    todo!()
+    total()
 }
 
 // Test

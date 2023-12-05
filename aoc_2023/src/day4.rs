@@ -13,7 +13,8 @@ pub fn process1(input: &str) -> u32 {
                 .split('|')
                 .map(|set| {
                     set.split(' ')
-                        .map(|s| s.trim()).filter(|s| !s.is_empty())
+                        .map(|s| s.trim())
+                        .filter(|s| !s.is_empty())
                         .map(|n| n.parse::<u32>().unwrap())
                         .collect::<HashSet<u32>>()
                 })
@@ -44,20 +45,22 @@ pub fn process2(input: &str) -> u32 {
                 .split('|')
                 .map(|set| {
                     set.split(' ')
-                        .map(|s| s.trim()).filter(|s| !s.is_empty())
+                        .map(|s| s.trim())
+                        .filter(|s| !s.is_empty())
                         .map(|n| n.parse::<u32>().unwrap())
                         .collect::<HashSet<u32>>()
                 })
                 .collect::<Vec<HashSet<u32>>>();
             sets[0].intersection(&sets[1]).collect::<Vec<&u32>>().len()
-        }).collect::<Vec<usize>>();
+        })
+        .collect::<Vec<usize>>();
 
     let mut counter = Vec::new();
     counter.resize(card_copies.len(), 1u32);
     let mut sum = 0;
     for (i, n_cards) in card_copies.iter().enumerate() {
         sum += counter[i];
-        for j in i+1..=i+*n_cards {
+        for j in i + 1..=i + *n_cards {
             counter[j] += counter[i];
         }
     }
