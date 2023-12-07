@@ -4,6 +4,7 @@ mod day3;
 mod day4;
 mod day5;
 mod day6;
+mod day7;
 
 fn main() {
     dotenv::dotenv().ok();
@@ -43,6 +44,10 @@ fn main() {
         6 => {
             day6::process1(&input);
             day6::process2(&input);
+        }
+        7 => {
+            day7::process1(&input);
+            day7::process2(&input);
         }
         _ => panic!("Day {} not implemented", day),
     }
