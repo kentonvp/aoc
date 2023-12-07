@@ -124,7 +124,7 @@ impl Mapping {
             result[0] = Some(vec![Range::new(self.source.end, range.end)]);
             result[1] = Some(vec![Range::new(
                 self.dest.start + range.start - self.source.start,
-                self.dest.end
+                self.dest.end,
             )]);
         } else if range.start < self.source.start && self.source.end < range.end {
             // Range larger than source.
