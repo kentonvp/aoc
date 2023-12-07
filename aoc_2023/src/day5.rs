@@ -1,4 +1,4 @@
-pub fn process1(input: &str) -> u32 {
+pub fn process1(input: &str) -> u64 {
     let stime = std::time::Instant::now();
     let mut it = input.lines();
 
@@ -11,9 +11,9 @@ pub fn process1(input: &str) -> u32 {
         .unwrap()
         .split_whitespace()
         .map(str::trim)
-        .map(str::parse::<u32>)
+        .map(str::parse::<u64>)
         .map(Result::unwrap)
-        .collect::<Vec<u32>>();
+        .collect::<Vec<u64>>();
 
     // Skip empty line
     let _ = it.next();
@@ -41,7 +41,7 @@ pub fn process1(input: &str) -> u32 {
 
         let mut mapping = l
             .split_whitespace()
-            .map(str::parse::<u32>)
+            .map(str::parse::<u64>)
             .map(Result::unwrap);
         let dest = mapping.next().expect("Destination");
         let source = mapping.next().expect("Source");
@@ -50,19 +50,19 @@ pub fn process1(input: &str) -> u32 {
         seeds = seeds
             .iter()
             .enumerate()
-            .map(|(i, s)| {
+            .map(|(i, &s)| {
                 if map_done[i] {
-                    *s
-                } else if (source <= *s) && (*s < (source + offset)) {
+                    s
+                } else if (source <= s) && (s < (source + offset)) {
                     // Mark as done.
                     map_done[i] = true;
-                    let delta = *s - source;
+                    let delta = s - source;
                     dest + delta
                 } else {
-                    *s
+                    s
                 }
             })
-            .collect::<Vec<u32>>();
+            .collect::<Vec<u64>>();
     }
 
     // Find minimum.
@@ -72,11 +72,85 @@ pub fn process1(input: &str) -> u32 {
     *sol
 }
 
-pub fn process2(input: &str) -> u32 {
+#[derive(Debug, Clone)]
+struct Range {
+    start: u64,
+    end: u64,
+}
+
+impl Range {
+    fn new(start: u64, end: u64) -> Self {
+        Self { start, end }
+    }
+}
+
+#[derive(Debug, Clone)]
+struct Mapping {
+    dest: Range,
+    source: Range,
+}
+
+impl Mapping {
+    fn new(dest: u64, source: u64, offset: u64) -> Self {
+        Self {
+            dest: Range::new(dest, dest + offset),
+            source: Range::new(source, source + offset),
+        }
+    }
+
+    fn apply(&self, range: &Range) -> [Option<Vec<Range>>; 2] {
+        // Result Element 1 is the leftover Ranges in the source space. Element 2 are Ranges in the
+        // destination space.
+        let mut result = [None, None];
+
+        if range.end <= self.source.start || self.source.end <= range.start {
+            // No overlap.
+            result[0] = Some(vec![range.clone()]);
+        } else if range.start < self.source.start
+            && self.source.start < range.end
+            && range.end <= self.source.end
+        {
+            // Partial overlap: mapped right part.
+            result[0] = Some(vec![Range::new(range.start, self.source.start)]);
+            result[1] = Some(vec![Range::new(
+                self.dest.start,
+                self.dest.start + range.end - self.source.start,
+            )]);
+        } else if self.source.start <= range.start
+            && range.start < self.source.end
+            && self.source.end < range.end
+        {
+            // Partial overlap: mapped left part.
+            result[0] = Some(vec![Range::new(self.source.end, range.end)]);
+            result[1] = Some(vec![Range::new(
+                self.dest.start + range.start - self.source.start,
+                self.dest.end
+            )]);
+        } else if range.start < self.source.start && self.source.end < range.end {
+            // Range larger than source.
+            result[0] = Some(vec![
+                Range::new(range.start, self.source.start),
+                Range::new(self.source.end, range.end),
+            ]);
+            result[1] = Some(vec![self.dest.clone()]);
+        } else if self.source.start <= range.start && range.end <= self.source.end {
+            // Range smaller than source.
+            result[1] = Some(vec![Range::new(
+                self.dest.start + range.start - self.source.start,
+                self.dest.start + range.end - self.source.start,
+            )]);
+        } else {
+            panic!("Unhandled case: {:?} {:?}", self, range);
+        }
+        result
+    }
+}
+
+pub fn process2(input: &str) -> u64 {
     let stime = std::time::Instant::now();
     let mut it = input.lines();
 
-    // Parse seed input
+    // Parse seed ranges.
     let seed_ranges = it
         .next()
         .unwrap()
@@ -85,77 +159,72 @@ pub fn process2(input: &str) -> u32 {
         .unwrap()
         .split_whitespace()
         .map(str::trim)
-        .map(str::parse::<u32>)
+        .map(str::parse::<u64>)
         .map(Result::unwrap)
-        .collect::<Vec<u32>>();
+        .collect::<Vec<u64>>();
+
+    let mut seeds = Vec::new();
+    for i in (0..seed_ranges.len()).step_by(2) {
+        let s = seed_ranges[i];
+        seeds.push(Range::new(s, s + seed_ranges[i + 1] - 1));
+    }
 
     // Skip empty line.
     let _ = it.next();
 
-    let mut seeds = Vec::new();
-    for i in (0..seed_ranges.len()).step_by(2) {
-        for j in 0..seed_ranges[i+1] {
-            seeds.push(seed_ranges[i] + j);
-        }
-    }
-
-    let total_seeds = seeds.len();
-    let mut map_done = vec![false; total_seeds];
-    let mut is_map_done = false;
-    let mut map_num = 0;
+    // Parse Mappings.
+    let mut mappings = Vec::new();
+    let mut curr_map = Vec::new();
     for l in it {
         if l.is_empty() {
-            println!("{} map done [took {:?}]", map_num, stime.elapsed());
             // Mapping finished.
-            map_done.fill(false);
-            is_map_done = false;
+            mappings.push(curr_map.clone());
+            curr_map = Vec::new();
             continue;
         }
 
         if l.starts_with(char::is_alphabetic) {
-            map_num += 1;
             // New mapping.
-            continue;
-        }
-
-        // Short-circuit if all entries are already found
-        if is_map_done || map_done.iter().all(|&b| b) {
-            is_map_done = true;
             continue;
         }
 
         let mut mapping = l
             .split_whitespace()
-            .map(str::parse::<u32>)
+            .map(str::parse::<u64>)
             .map(Result::unwrap);
         let dest = mapping.next().expect("Destination");
         let source = mapping.next().expect("Source");
         let offset = mapping.next().expect("Offset");
+        curr_map.push(Mapping::new(dest, source, offset));
+    }
+    // Add last mapping.
+    mappings.push(curr_map.clone());
 
-        seeds = seeds
-            .iter().enumerate()
-            .map(|(i, &s)| {
-                if map_done[i] {
-                    // Already found mapping. Skip.
-                    s
-                } else if (source <= s) && (s < (source + offset)) {
-                    // Mark as done.
-                    map_done[i] = true;
-                    let delta = s - source;
-                    dest + delta
-                } else {
-                    // No mapping found and not done. Keep original.
-                    s
+    for (_i, map_group) in mappings.iter().enumerate() {
+        let mut finished_ranges = Vec::new();
+        for m in map_group.iter() {
+            let mut unfinished_ranges = Vec::new();
+            for r in seeds.iter() {
+                let mut res = m.apply(r);
+                if let Some(mut unmapped) = res[0].take() {
+                    unfinished_ranges.append(&mut unmapped);
                 }
-            })
-            .collect::<Vec<u32>>();
+                if let Some(mut mapped) = res[1].take() {
+                    finished_ranges.append(&mut mapped);
+                }
+            }
+
+            seeds.clear();
+            seeds.append(&mut unfinished_ranges.clone());
+        }
+        seeds.append(&mut finished_ranges.clone());
     }
 
     // Find minimum.
-    let sol = seeds.iter().min().unwrap();
+    let sol = seeds.into_iter().map(|r| r.start).min().unwrap();
 
     println!("Day 5 - Part 2: {} [{:?}]", sol, stime.elapsed());
-    *sol
+    sol
 }
 
 // Test
@@ -237,5 +306,11 @@ humidity-to-location map:
 60 56 37
 56 93 4";
         assert_eq!(process2(input), 46)
+    }
+
+    #[test]
+    fn test_process2_real() {
+        let input = std::fs::read_to_string("inputs/day5.txt").unwrap();
+        assert_eq!(process2(&input), 84206669)
     }
 }
