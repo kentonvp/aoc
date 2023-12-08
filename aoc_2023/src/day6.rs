@@ -61,7 +61,7 @@ pub fn process2(input: &str) -> u64 {
 
     let sol = ways_to_beat_record(time, distance);
 
-    println!("Day 6 - Part 1: {} [{:?}]", sol, stime.elapsed());
+    println!("Day 6 - Part 2: {} [{:?}]", sol, stime.elapsed());
     sol
 }
 

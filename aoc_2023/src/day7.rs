@@ -179,7 +179,7 @@ pub fn process2(input: &str) -> u64 {
         sol += (h.bid as u64) * (i as u64 + 1);
     }
 
-    println!("Day 7 - Part 1: {} [{:?}]", sol, stime.elapsed());
+    println!("Day 7 - Part 2: {} [{:?}]", sol, stime.elapsed());
     sol
 }
 

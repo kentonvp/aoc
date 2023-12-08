@@ -1,4 +1,5 @@
 pub fn process1(input: &str) -> u64 {
+    let stime = std::time::Instant::now();
     // loop through the lines of a file
     let mut sum = 0u64;
     for line in input.lines() {
@@ -9,11 +10,12 @@ pub fn process1(input: &str) -> u64 {
         let d = format!("{}{}", d1, d2);
         sum += d.parse::<u64>().unwrap();
     }
-    println!("{sum}");
+    println!("Day 1 - Part 1: {} [{:?}]", sum, stime.elapsed());
     sum
 }
 
 pub fn process2(input: &str) -> u64 {
+    let stime = std::time::Instant::now();
     let numbers: [&str; 9] = [
         "one", "two", "three", "four", "five", "six", "seven", "eight", "nine",
     ];
@@ -61,7 +63,7 @@ pub fn process2(input: &str) -> u64 {
         let d = format!("{}{}", d1 + 1, d2 + 1);
         sum += d.parse::<u64>().unwrap();
     }
-    println!("{sum}");
+    println!("Day 1 - Part 2: {} [{:?}]", sum, stime.elapsed());
     sum
 }
 

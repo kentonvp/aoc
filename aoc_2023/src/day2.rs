@@ -1,4 +1,5 @@
 pub fn process1(input: &str) -> u32 {
+    let stime = std::time::Instant::now();
     const MAX_RED: u32 = 12;
     const MAX_GREEN: u32 = 13;
     const MAX_BLUE: u32 = 14;
@@ -55,11 +56,12 @@ pub fn process1(input: &str) -> u32 {
         }
     }
 
-    println!("{sum}");
+    println!("Day 1 - Part 1: {} [{:?}]", sum, stime.elapsed());
     sum
 }
 
 pub fn process2(input: &str) -> u32 {
+    let stime = std::time::Instant::now();
     let mut sum: u32 = 0;
 
     for line in input.lines() {
@@ -105,7 +107,7 @@ pub fn process2(input: &str) -> u32 {
         sum += power;
     }
 
-    println!("{sum}");
+    println!("Day 2 - Part 2: {} [{:?}]", sum, stime.elapsed());
     sum
 }
 
