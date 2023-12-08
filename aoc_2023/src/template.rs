@@ -1,13 +1,15 @@
 pub fn process1(input: &str) -> u32 {
     let stime = std::time::Instant::now();
-    println!("Day N - Part 1: {} [{:?}]", sum, stime.elapsed());
-    todo!()
+    let sol = 0;
+    println!("Day N - Part 1: {} [{:?}]", sol, stime.elapsed());
+    sol
 }
 
 pub fn process2(input: &str) -> u32 {
     let stime = std::time::Instant::now();
-    println!("Day N - Part 2: {} [{:?}]", sum, stime.elapsed());
-    total()
+    let sol = 0;
+    println!("Day N - Part 2: {} [{:?}]", sol, stime.elapsed());
+    sol
 }
 
 // Test
