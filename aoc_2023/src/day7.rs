@@ -21,7 +21,7 @@ impl Hand {
 
         if counts.iter().any(|&c| c == 5) || jokers == 5 {
             // Five of a kind.
-            return 7;
+            7
         } else if counts.iter().any(|&c| c == 4) {
             // Four of a kind.
             match jokers {
@@ -31,7 +31,7 @@ impl Hand {
             }
         } else if counts.iter().any(|&c| c == 3) && counts.iter().any(|&c| c == 2) {
             // Full house.
-            return 5;
+            5
         } else if counts.iter().any(|&c| c == 3) {
             // Three of a kind.
             match jokers {
@@ -74,20 +74,18 @@ impl Hand {
 
 impl Ord for Hand {
     fn cmp(&self, other: &Self) -> std::cmp::Ordering {
-        if self.get_handtype() < other.get_handtype() {
-            return std::cmp::Ordering::Less;
-        } else if self.get_handtype() > other.get_handtype() {
-            return std::cmp::Ordering::Greater;
-        }
-
-        for i in 0..5 {
-            if self.cards[i] < other.cards[i] {
-                return std::cmp::Ordering::Less;
-            } else if self.cards[i] > other.cards[i] {
-                return std::cmp::Ordering::Greater;
+        match self.get_handtype().cmp(&other.get_handtype()) {
+            std::cmp::Ordering::Equal => {
+                for i in 0..5 {
+                    match self.cards[i].cmp(&other.cards[i]) {
+                        std::cmp::Ordering::Equal => continue,
+                        x => return x,
+                    }
+                }
+                std::cmp::Ordering::Equal
             }
+            x => x,
         }
-        return std::cmp::Ordering::Equal;
     }
 }
 

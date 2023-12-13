@@ -25,7 +25,7 @@ fn binary_search(mapping: &Vec<Node>, key: String) -> &Node {
         }
         curr = mapping[mid].value.as_str();
     }
-    return &mapping[mid];
+    &mapping[mid]
 }
 
 pub fn process1(input: &str) -> u32 {
@@ -127,7 +127,7 @@ pub fn process2(input: &str) -> u64 {
 
     let starts = mappings
         .iter()
-        .filter(|n| n.value.ends_with("A"))
+        .filter(|n| n.value.ends_with('A'))
         .collect::<Vec<&Node>>();
 
     let mut curr = starts.clone();
@@ -154,7 +154,7 @@ pub fn process2(input: &str) -> u64 {
             .collect::<Vec<&Node>>();
 
         curr.iter().enumerate().for_each(|(i, &n)| {
-            if n.value.ends_with("Z") && cycles[i] == 0 {
+            if n.value.ends_with('Z') && cycles[i] == 0 {
                 cycles[i] = steps;
             }
         });
@@ -162,8 +162,8 @@ pub fn process2(input: &str) -> u64 {
 
     // Find the LCM of all the cycles.
     let mut sol = cycles[0] as u64;
-    for i in 1..cycles.len() {
-        sol = lcm(sol, cycles[i] as u64);
+    for c in cycles.iter().skip(1) {
+        sol = lcm(sol, *c as u64);
     }
 
     println!("Day 8 - Part 2: {} [{:?}]", sol, stime.elapsed());
