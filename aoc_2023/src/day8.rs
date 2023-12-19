@@ -1,5 +1,5 @@
-use std::collections::HashMap;
 use num::integer::lcm;
+use std::collections::HashMap;
 
 #[derive(Clone, Debug)]
 struct Node {
@@ -121,7 +121,7 @@ pub fn process2(input: &str) -> u64 {
         })
         .collect::<Vec<Node>>();
     mappings.sort_by_key(|n| n.value.clone());
-    
+
     // Cache the binary search results.
     let mut cache = HashMap::new();
 
@@ -134,8 +134,7 @@ pub fn process2(input: &str) -> u64 {
 
     let mut cycles = vec![0usize; curr.len()];
     let mut steps = 0;
-    while !(cycles.iter().all(|&n| n > 0))
-    {
+    while !(cycles.iter().all(|&n| n > 0)) {
         steps += 1;
         let dir = directions.next().unwrap();
 
