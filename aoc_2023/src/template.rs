@@ -17,7 +17,6 @@ pub fn process2(input: &str) -> u32 {
 mod tests {
     use super::*;
 
-
     #[test]
     fn test_process1() {
         let input = "";
