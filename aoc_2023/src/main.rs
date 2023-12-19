@@ -1,4 +1,5 @@
 mod day1;
+mod day10;
 mod day2;
 mod day3;
 mod day4;
@@ -58,6 +59,10 @@ fn main() {
         9 => {
             day9::process1(&input);
             day9::process2(&input);
+        }
+        10 => {
+            day10::process1(&input);
+            day10::process2(&input);
         }
         _ => panic!("Day {} not implemented", day),
     }
