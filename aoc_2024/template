@@ -1,0 +1,18 @@
+// Day N //////////////////////////////////////////////////////////////////////
+fn part1(contents: &str) -> u32 {
+    todo!()
+}
+
+fn part2(contents: &str) -> i32 {
+    todo!()
+}
+
+fn dayN(contents: &str) {
+    let time = std::time::Instant::now();
+    let res = part1(contents);
+    println!("Part1: {} ({:.4}s)", res, time.elapsed().as_secs_f64());
+
+    let time = std::time::Instant::now();
+    let res = part2(contents);
+    println!("Part2: {} ({:.4}s)", res, time.elapsed().as_secs_f64());
+}

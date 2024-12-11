@@ -7,9 +7,6 @@ edition = "2021"
 name = "solve"
 path = "src/solve.rs"
 
-[[bin]]
-name = "download"
-path = "src/download.rs"
 
 [dependencies]
 regex = "1.11.1"
