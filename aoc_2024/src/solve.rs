@@ -7,6 +7,7 @@ mod day3;
 mod day4;
 mod day5;
 mod day6;
+mod day7;
 
 fn parse_args() -> (u16, String) {
     let args: Vec<String> = env::args().collect();
@@ -30,6 +31,7 @@ fn main() {
         4 => day4::solve(&contents),
         5 => day5::solve(&contents),
         6 => day6::solve(&contents),
+        7 => day7::solve(&contents),
         _ => println!("Invalid day"),
     }
 }
