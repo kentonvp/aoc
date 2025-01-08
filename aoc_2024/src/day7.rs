@@ -1,48 +1,22 @@
 // Day 7 //////////////////////////////////////////////////////////////////////
-// Trick is to track the number using bits. At each operator position it is
-// binary. Which means we can track using bits.
-// Simplest example with only 1 operator:
-// a * b 0
-// a + b 1
-//
-// 2 operator:
-// a * b * c 00
-// a * b + c 01
-// a + b + c 11
-// a + b * c 10
-//
-// 3 operator:
-// a * b * c * d 000
-// a * b * c + d 001
-// a * b + c * d 010
-// a * b + c + d 011
-// a + b * c * d 100
-// a + b * c + d 101
-// a + b + c * d 110
-// a + b + c + d 111
 fn is_valid_equation(sol: u64, eq: Vec<u64>) -> bool {
-    // Number of possible operator permuations is 2^(n-1).
-    let n_opts = 2u64.pow((eq.len() - 1) as u32);
+    let mut stack = Vec::new();
 
-    for i in 0..n_opts {
-        let mut answer = eq[0];
-        for pos in 0..eq.len() - 1 {
-            // Check if bit at position `pos` in `i` is set.
-            if (i >> pos) & 1 == 1 {
-                answer += eq[pos + 1];
-            } else {
-                answer *= eq[pos + 1];
-            }
-
-            // Since answer is always increasing, we can early exit if the
-            // current answer is greater than the expected solution.
-            if answer > sol {
-                break;
-            }
+    stack.push(eq[0]);
+    for x2 in eq.into_iter().skip(1) {
+        let mut new_stack = Vec::new();
+        while let Some(x) = stack.pop() {
+            // x * x2
+            new_stack.push(x * x2);
+            // x + x2
+            new_stack.push(x + x2);
         }
 
-        // Found correct answer, can early exit.
-        if answer == sol {
+        stack = new_stack;
+    }
+
+    while let Some(x) = stack.pop() {
+        if x == sol {
             return true;
         }
     }
@@ -75,8 +49,64 @@ fn part1(contents: &str) -> u64 {
     sum_test_values
 }
 
+fn is_valid_equation_p2(sol: u64, eq: Vec<u64>) -> bool {
+    let mut stack = Vec::new();
+
+    // Ex.
+    // 7290 = 6 8 6 15
+    //      = 6 * 8 || 6 * 15
+    //      = 48 || 6 * 15
+    //      = 486 * 15
+    //      = 7290
+    stack.push(eq[0]);
+    for x2 in eq.into_iter().skip(1) {
+        let mut new_stack = Vec::new();
+        while let Some(x) = stack.pop() {
+            // x * x2
+            new_stack.push(x * x2);
+            // x + x2
+            new_stack.push(x + x2);
+            // x || x2
+            new_stack.push(
+                format!("{x}{x2}").parse::<u64>().expect("unable to concat"),
+            );
+        }
+
+        stack = new_stack;
+    }
+
+    while let Some(x) = stack.pop() {
+        if x == sol {
+            return true;
+        }
+    }
+
+    false
+}
+
 fn part2(contents: &str) -> u64 {
-    todo!()
+    let equations = contents
+        .lines()
+        .map(|line| {
+            // split by whitespace
+            let parts = line.split_whitespace().collect::<Vec<&str>>();
+            let sol = parts[0][..parts[0].len() - 1].parse::<u64>().unwrap();
+            let eq = parts[1..]
+                .iter()
+                .map(|p| p.parse::<u64>().unwrap())
+                .collect::<Vec<u64>>();
+            (sol, eq)
+        })
+        .collect::<Vec<(u64, Vec<u64>)>>();
+
+    let mut sum_test_values = 0;
+    for (sol, eq) in equations {
+        if is_valid_equation_p2(sol, eq) {
+            sum_test_values += sol;
+        }
+    }
+
+    sum_test_values
 }
 
 pub fn solve(contents: &str) {
@@ -119,5 +149,12 @@ mod tests {
 21037: 9 7 18 13
 292: 11 6 16 20";
         assert_eq!(part2(contents), 11387)
+    }
+
+    #[test]
+    fn test_is_valid_equation_p2() {
+        assert!(is_valid_equation_p2(156, vec![15, 6]));
+        assert!(is_valid_equation_p2(7290, vec![6, 8, 6, 15]));
+        assert!(is_valid_equation_p2(192, vec![17, 8, 14]));
     }
 }
