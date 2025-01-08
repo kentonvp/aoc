@@ -17,10 +17,7 @@ fn parse_args() -> (u16, String) {
         eprintln!("Usage: {} <day>", args[0]);
         std::process::exit(1);
     }
-    (
-        args[1].parse().unwrap(),
-        format!("inputs/day{}.txt", args[1]),
-    )
+    (args[1].parse().unwrap(), format!("inputs/day{}.txt", args[1]))
 }
 
 fn main() {

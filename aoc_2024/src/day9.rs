@@ -15,24 +15,13 @@ fn move_data(used: &Block, free: &Block) -> (Block, Option<Block>) {
 
     if size > 0 {
         // Block too big for free space: splits. The remainder is returned in the Option.
-        let used = Block {
-            id,
-            size: free.size,
-            free: false,
-        };
-        let remainder = Block {
-            id,
-            size: size as usize,
-            free: false,
-        };
+        let used = Block { id, size: free.size, free: false };
+        let remainder = Block { id, size: size as usize, free: false };
         (used, Some(remainder))
     } else if size < 0 {
         // Block fits into free space. The free space is made into a block in the Option.
-        let free = Block {
-            id: free.id,
-            size: free.size - used.size,
-            free: true,
-        };
+        let free =
+            Block { id: free.id, size: free.size - used.size, free: true };
         (used.clone(), Some(free))
     } else {
         // Block fits exactly into free space.
@@ -89,7 +78,8 @@ fn part1(contents: &str) -> u64 {
     let mut disk = decompress(contents);
 
     let mut free_idx = next_free_block(&disk, 0).expect("No free block");
-    let mut used_idx = prev_used_block(&disk, disk.len()).expect("No used block");
+    let mut used_idx =
+        prev_used_block(&disk, disk.len()).expect("No used block");
     while free_idx < used_idx {
         let (used, other) = move_data(&disk[used_idx], &disk[free_idx]);
         // Always update disk with used block.

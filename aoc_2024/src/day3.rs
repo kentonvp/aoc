@@ -18,7 +18,10 @@ fn part1(contents: &str) -> u32 {
 }
 
 fn part2(contents: &str) -> u32 {
-    let re = Regex::new(r"mul\((?<f>[0-9]{1,3}),(?<s>[0-9]{1,3})\)|do\(\)|don't\(\)").unwrap();
+    let re = Regex::new(
+        r"mul\((?<f>[0-9]{1,3}),(?<s>[0-9]{1,3})\)|do\(\)|don't\(\)",
+    )
+    .unwrap();
 
     let muls: Vec<&str> = re.find_iter(contents).map(|m| m.as_str()).collect();
 

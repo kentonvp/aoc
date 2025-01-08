@@ -19,10 +19,8 @@ fn check_safety(levels: Vec<i32>) -> bool {
 fn part1(contents: &str) -> u32 {
     let mut safe_counts = 0;
     for line in contents.lines() {
-        let cols: Vec<i32> = line
-            .split_whitespace()
-            .map(|x| x.parse().unwrap())
-            .collect();
+        let cols: Vec<i32> =
+            line.split_whitespace().map(|x| x.parse().unwrap()).collect();
 
         if check_safety(cols) {
             safe_counts += 1;
@@ -74,10 +72,8 @@ fn check_safety_with_skip(levels: Vec<i32>, skip: bool) -> bool {
 fn part2(contents: &str) -> i32 {
     let mut safe_counts = 0;
     for line in contents.lines() {
-        let cols: Vec<i32> = line
-            .split_whitespace()
-            .map(|x| x.parse().unwrap())
-            .collect();
+        let cols: Vec<i32> =
+            line.split_whitespace().map(|x| x.parse().unwrap()).collect();
 
         if check_safety_with_skip(cols, true) {
             safe_counts += 1;

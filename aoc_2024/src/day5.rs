@@ -1,7 +1,10 @@
 // Day 5 //////////////////////////////////////////////////////////////////////
 use std::collections::{HashMap, HashSet};
 
-fn is_valid_print_order(printer: &HashMap<u32, HashSet<u32>>, print_order: &[u32]) -> bool {
+fn is_valid_print_order(
+    printer: &HashMap<u32, HashSet<u32>>,
+    print_order: &[u32],
+) -> bool {
     for (i, e) in print_order.iter().enumerate() {
         let (_, post_e) = print_order.split_at(i + 1);
 
@@ -70,7 +73,10 @@ fn find_print_order_err(
     None
 }
 
-fn correct_print_order(printer: &HashMap<u32, HashSet<u32>>, print_order: &mut Vec<u32>) {
+fn correct_print_order(
+    printer: &HashMap<u32, HashSet<u32>>,
+    print_order: &mut Vec<u32>,
+) {
     // while the print order is not valid
     // find the first element that is not valid
     // use move_elem to move it to the correct position
