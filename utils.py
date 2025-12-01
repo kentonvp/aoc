@@ -1,44 +1,40 @@
 import argparse
-import requests
 import os
-from dotenv import load_dotenv
+from pathlib import Path
 
+import requests
+from dotenv import load_dotenv
 
 load_dotenv()
 
-YEAR = 2022
+YEAR = 2025
 
 
 def download_input(day: int, year: int = YEAR):
-    res = requests.get(
-        f"https://adventofcode.com/{year}/day/{day}/input",
-        cookies={"session": os.environ.get("SESSION_COOKIE", "SESSION_COOKIE")},
-    )
+    print(f"Downloading input for day: {year} - {day}")
+    try:
+        res = requests.get(
+            f"https://adventofcode.com/{year}/day/{day}/input",
+            cookies={"session": os.environ.get("SESSION_COOKIE", "SESSION_COOKIE")},
+        )
+    except Exception as e:
+        print(f"Error downloading input: {e}")
+        return
 
-    if day < 10:
-        fname = f"aoc_{year}/day0{day}/input.txt"
-    else:
-        fname = f"aoc_{year}/day{day}/input.txt"
-
+    fname = f"aoc_{year}/inputs/day{day:0>2}.txt"
+    Path(fname).parent.mkdir(parents=True, exist_ok=True)
     with open(fname, "w") as f:
         f.write(res.text)
 
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--day", dest="day", default=0, type=int)
-    parser.add_argument(
-        "--input", dest="input", action="store_const", const=True, default=False
-    )
+    parser.add_argument("day", type=int)
 
     args = parser.parse_args()
+    assert 1 <= args.day <= 31, "Day must be between 1 and 31"
 
-    if args.day == 0:
-        return
-
-    if args.input:
-        print(f"Downloading input for day: {args.day}")
-        download_input(args.day)
+    download_input(args.day)
 
 
 if __name__ == "__main__":
