@@ -20,7 +20,7 @@ fn split_digits(s: u64) -> (u64, u64) {
 
 fn blink(stone: u64) -> (u64, Option<u64>) {
     match stone {
-        s if s == 0 => (1, None),
+        0 => (1, None),
         s if has_even_digits(s) => {
             let (p1, p2) = split_digits(s);
             (p1, Some(p2))
@@ -29,9 +29,14 @@ fn blink(stone: u64) -> (u64, Option<u64>) {
     }
 }
 
-fn count_stone_blinks(stone: u64, n_blinks: usize, cache: &mut HashMap::<(u64, usize), usize>, blink_cache: &mut HashMap::<u64, (u64, Option<u64>)>) -> usize {
+fn count_stone_blinks(
+    stone: u64,
+    n_blinks: usize,
+    cache: &mut HashMap<(u64, usize), usize>,
+    blink_cache: &mut HashMap<u64, (u64, Option<u64>)>,
+) -> usize {
     if let Some(&out) = cache.get(&(stone, n_blinks)) {
-        return out
+        return out;
     }
 
     let (p1, p2) = match blink_cache.get(&stone) {
@@ -46,15 +51,15 @@ fn count_stone_blinks(stone: u64, n_blinks: usize, cache: &mut HashMap::<(u64, u
     if n_blinks == 1 {
         if p2.is_some() {
             cache.insert((stone, 1), 2);
-            return 2
+            return 2;
         } else {
             cache.insert((stone, 1), 1);
-            return 1
+            return 1;
         }
     }
 
-    let mut out = count_stone_blinks(p1, n_blinks -1, cache, blink_cache);
-    
+    let mut out = count_stone_blinks(p1, n_blinks - 1, cache, blink_cache);
+
     if let Some(p2) = p2 {
         out += count_stone_blinks(p2, n_blinks - 1, cache, blink_cache)
     }

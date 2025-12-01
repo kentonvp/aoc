@@ -5,7 +5,7 @@ use std::collections::HashSet;
 fn parse_input(contents: &str) -> Vec<Vec<u32>> {
     contents
         .lines()
-        .map(|l| l.chars().map(|c| c.to_digit(10).unwrap() as u32).collect())
+        .map(|l| l.chars().map(|c| c.to_digit(10).unwrap()).collect())
         .collect()
 }
 
@@ -24,8 +24,7 @@ fn count_trails(map: &[Vec<u32>], start: (usize, usize)) -> u32 {
 
     let mut seen = HashSet::new();
     let mut trails = vec![(0u32, start)];
-    while !trails.is_empty() {
-        let t = trails.pop().expect("trails is not empty");
+    while let Some(t) = trails.pop() {
         let x = t.1 .0;
         let y = t.1 .1;
         let h = t.0;
@@ -73,8 +72,7 @@ fn trail_rating(map: &[Vec<u32>], start: (usize, usize)) -> u32 {
 
     let mut cnt = 0;
     let mut trails = vec![(0u32, start)];
-    while !trails.is_empty() {
-        let t = trails.pop().expect("trails is not empty");
+    while let Some(t) = trails.pop() {
         let x = t.1 .0;
         let y = t.1 .1;
         let h = t.0;

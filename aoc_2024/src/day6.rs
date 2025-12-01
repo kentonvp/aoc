@@ -115,22 +115,59 @@ fn is_cycle(map: &[Vec<bool>], guard: &Point) -> bool {
     }
 }
 
+fn get_path(map: &[Vec<bool>], mark: &Point) -> HashSet<Point> {
+    let mut mark = *mark;
+    let mut current_direction = Direction::North;
+
+    let mut visited = HashSet::new();
+    while inbounds(&map, &mark) {
+        visited.insert(mark);
+
+        // Check next location.
+        let (next_x, next_y) = match current_direction {
+            Direction::North => (mark.x, mark.y - 1),
+            Direction::East => (mark.x + 1, mark.y),
+            Direction::South => (mark.x, mark.y + 1),
+            Direction::West => (mark.x - 1, mark.y),
+        };
+
+        // If next step is inbounds but is an obstacle then change direction.
+        if inbounds(&map, &Point { x: next_x, y: next_y })
+            && map[next_y as usize][next_x as usize]
+        {
+            match current_direction {
+                Direction::North => current_direction = Direction::East,
+                Direction::East => current_direction = Direction::South,
+                Direction::South => current_direction = Direction::West,
+                Direction::West => current_direction = Direction::North,
+            }
+        } else {
+            // Take step.
+            mark = Point { x: next_x, y: next_y };
+        }
+    }
+
+    return visited;
+}
+
 fn part2(contents: &str) -> usize {
     let (mut map, guard) = parse_map(contents);
 
+    // Can only create a cycle if on the path of the guard.
+    let path = get_path(&map, &guard);
+
     let mut cycles = 0;
-    for y in 0..map.len() {
-        for x in 0..map[0].len() {
-            if !(map[y][x] || (guard.x as usize == x && guard.y as usize == y))
-            {
-                // Set map location to true
-                map[y][x] = true;
-                if is_cycle(&map, &guard) {
-                    cycles += 1;
-                }
-                // Reset after cycle check.
-                map[y][x] = false;
+    for p in path {
+        let (x, y) = (p.x as usize, p.y as usize);
+        if !(map[y][x] || (guard.x as usize == x && guard.y as usize == y))
+        {
+            // Set map location to true
+            map[y][x] = true;
+            if is_cycle(&map, &guard) {
+                cycles += 1;
             }
+            // Reset after cycle check.
+            map[y][x] = false;
         }
     }
     cycles

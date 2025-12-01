@@ -1,5 +1,7 @@
 // Day 5 //////////////////////////////////////////////////////////////////////
 use std::collections::{HashMap, HashSet};
+use std::thread;
+use std::sync::mpsc;
 
 fn is_valid_print_order(
     printer: &HashMap<u32, HashSet<u32>>,
@@ -89,7 +91,7 @@ fn correct_print_order(
 fn part2(contents: &str) -> u32 {
     let mut printer = HashMap::new();
 
-    let mut middle_sum = 0;
+    let (tx, rx) = mpsc::channel();
 
     for l in contents.lines() {
         if l.contains("|") {
@@ -100,16 +102,27 @@ fn part2(contents: &str) -> u32 {
             printer.entry(a).or_insert(HashSet::new()).insert(b);
             printer.entry(b).or_insert(HashSet::new());
         } else if l.contains(",") {
-            let mut print_order = l
-                .split(",")
-                .map(|x| x.parse::<u32>().unwrap())
-                .collect::<Vec<u32>>();
+            let tx = tx.clone();
+            let printer = printer.clone();
+            let l = l.to_string();
+            thread::spawn(move || {
+                let mut print_order = l
+                    .split(",")
+                    .map(|x| x.parse::<u32>().unwrap())
+                    .collect::<Vec<u32>>();
 
-            if !is_valid_print_order(&printer, &print_order) {
-                correct_print_order(&printer, &mut print_order);
-                middle_sum += print_order[print_order.len() / 2];
-            }
+                if !is_valid_print_order(&printer, &print_order) {
+                    correct_print_order(&printer, &mut print_order);
+                    tx.send(print_order[print_order.len() / 2]).unwrap();
+                }
+            });
         }
+    }
+    drop(tx);
+
+    let mut middle_sum = 0;
+    for c in rx.iter() {
+        middle_sum += c;
     }
 
     middle_sum
