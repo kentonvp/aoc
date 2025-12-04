@@ -3,6 +3,7 @@ use std::env::args;
 mod day1;
 mod day2;
 mod day3;
+mod day4;
 
 fn main() {
     let args = args().collect::<Vec<String>>();
@@ -25,6 +26,11 @@ fn main() {
             let input = include_str!("../inputs/day03.txt");
             day3::part1(input);
             day3::part2(input);
+        }
+        "4" => {
+            let input = include_str!("../inputs/day04.txt");
+            day4::part1(input);
+            day4::part2(input);
         }
         _ => eprintln!("ERROR: Day not implemented"),
     }
