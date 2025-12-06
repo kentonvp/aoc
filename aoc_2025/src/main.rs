@@ -5,6 +5,7 @@ mod day2;
 mod day3;
 mod day4;
 mod day5;
+mod day6;
 
 fn main() {
     let args = args().collect::<Vec<String>>();
@@ -37,6 +38,11 @@ fn main() {
             let input = include_str!("../inputs/day05.txt");
             day5::part1(input);
             day5::part2(input);
+        }
+        "6" => {
+            let input = include_str!("../inputs/day06.txt");
+            day6::part1(input);
+            day6::part2(input);
         }
         _ => eprintln!("ERROR: Day not implemented"),
     }
